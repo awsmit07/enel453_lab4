@@ -1,0 +1,33 @@
+# Ignore backup files
+*.bak
+
+# Ignore Binary FIles
+*.hdb
+*.rcfdb
+*.cdb
+*.dpi
+*.hb_info
+*.kpt
+*.ammdb
+*.dfp
+*.done
+*.rdb
+*.logdb
+*.sci
+*.bpm
+*.wlf
+*.qws
+*.mpf
+*.mti
+
+
+# Ignore Outputs
+incremental_db
+output_files
+db
+simulation
+
+
+# Ignore Quartus files
+Project_Files/lab2.qpf
+Project_Files/lab2.qsf
