@@ -31,8 +31,8 @@ end component;
 --******************************************************************************************************************************************
 -- Comment out one of the two lines below, to select whether you want RTL (for DE10-Lite board) or simulation (for testbench) for the ADC **
 --******************************************************************************************************************************************
-for ADC_ins : ADC_Conversion_wrapper use entity work.ADC_Conversion_wrapper(RTL);        -- selects the RTL architecture
---for ADC_ins : ADC_Conversion_wrapper use entity work.ADC_Conversion_wrapper(simulation); -- selects the simulation architecture
+--for ADC_ins : ADC_Conversion_wrapper use entity work.ADC_Conversion_wrapper(RTL);        -- selects the RTL architecture
+for ADC_ins : ADC_Conversion_wrapper use entity work.ADC_Conversion_wrapper(simulation); -- selects the simulation architecture
 --******************************************************************************************************************************************
 
 Component voltage2distance_array2 IS -- converts ADC's voltage value to distance value

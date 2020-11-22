@@ -115,14 +115,6 @@ component bcd_clear_leading_zeros is
 	);
 end component;
 
-component distance_to_LEDR is
-	port(clk: in std_logic;
-			reset_n: in std_logic;
-			distance: std_logic_vector(12 downto 0);
-			LEDR: out std_logic_vector(9 downto 0)
-		);
-end component;
-
 begin
    Num_Hex0 <= display_binary(3  downto  0);
    Num_Hex1 <= display_binary(7  downto  4);
@@ -133,13 +125,6 @@ begin
    --DP_in    <= "000000"; -- position of the decimal point in the display (1=LED on,0=LED off)
    --blank    <= "110000"; -- blank the 2 MSB 7-segment displays (1=7-seg display off, 0=7-seg display on)
 
-distance_to_LEDR_ins: distance_to_LEDR
-	port map(clk => clk,
-				reset_n => reset_n,
-				distance => dist_binary,
-				LEDR => LEDR
-	);
-	
 blanks_ins: bcd_clear_leading_zeros
 	generic map("0101")
 	port map(clk => clk,
@@ -241,7 +226,8 @@ dist_adc: ADC_Data
 				distance => dist_binary,
 				ADC_out => adc_binary(11 downto 0)
 				);
-				
+
+LEDR(9 downto 0) <=sync_sw(9 downto 0); -- gives visual display of the switch inputs to the LEDs on board
 binary <= "00000000" & sync_sw(7 downto 0);
 
 
