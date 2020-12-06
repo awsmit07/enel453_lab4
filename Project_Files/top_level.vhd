@@ -8,7 +8,8 @@ entity top_level is
 		     SW                            : in  STD_LOGIC_VECTOR (9 downto 0);
 			  freeze							     : in  STD_LOGIC;
            LEDR                          : out STD_LOGIC_VECTOR (9 downto 0);
-           HEX0,HEX1,HEX2,HEX3,HEX4,HEX5 : out STD_LOGIC_VECTOR (7 downto 0)
+           HEX0,HEX1,HEX2,HEX3,HEX4,HEX5 : out STD_LOGIC_VECTOR (7 downto 0);
+			  buzzer : out std_logic
           );
 
 end top_level;
@@ -123,7 +124,19 @@ component distance_to_LEDR is
 		);
 end component;
 
+component distance_to_buzzer is
+	generic(maxcount: natural:=200;
+			  scale: natural:=5
+			 );
+	port(clk: in std_logic;
+		 reset_n: in std_logic;
+		 distance: in std_logic_vector(12 downto 0);
+		 buzzer: out std_logic
+		);
+end component;
+
 begin
+
    Num_Hex0 <= display_binary(3  downto  0);
    Num_Hex1 <= display_binary(7  downto  4);
    Num_Hex2 <= display_binary(11 downto  8);
@@ -138,6 +151,13 @@ distance_to_LEDR_ins: distance_to_LEDR
 				reset_n => reset_n,
 				distance => dist_binary,
 				LEDR => LEDR
+	);
+	
+distance_to_buzzer_ins: distance_to_buzzer
+	port map(clk => clk,
+				reset_n => reset_n,
+				distance => dist_binary,
+				buzzer => buzzer
 	);
 	
 blanks_ins: bcd_clear_leading_zeros

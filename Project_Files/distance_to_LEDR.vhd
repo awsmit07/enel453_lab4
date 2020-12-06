@@ -36,6 +36,7 @@ led_pwm: PWM_DAC
 	);
 	
 LEDR <= (others=>'1') when pwm_out = '1' and to_integer(unsigned(distance)) < 3560 else (others=>'0');
+--
 duty_cycle <= std_logic_vector(to_unsigned(512-to_integer(shift_right(unsigned(distance),3))+50,9));
 	
 end structural;
