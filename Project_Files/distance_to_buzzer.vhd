@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity distance_to_buzzer is
-	generic(maxcount: natural:=200;
-			  scale: natural:=5
+	generic(maxcount: natural:=50;
+			  scale: natural:=7
 			 );
 	port(clk: in std_logic;
 		 reset_n: in std_logic;
