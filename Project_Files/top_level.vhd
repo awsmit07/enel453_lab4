@@ -135,31 +135,16 @@ component distance_to_buzzer is
 		);
 end component;
 
-component sevseg_blink is
-    -- Controls blinking of the seven segment display
-    --
-    -- clk: system clock
-    --
-    -- reset_n: asyncronous active low reset
-    --
-    -- dist: the 13 bit distance value measured in intervals of 0.0001m
-    --
-    -- blink_dist: the distance below which to start blinking
-    --
-    -- clears: outputs an array of either all ones or zeros. If one then
-    -- the display will be cleared. If zero then the display will be on.
-    -- clears will turn on and off to blink the LEDs.
-
-    port
-    (
-        clk: in std_logic;
-        reset_n: in std_logic:= '1';
-        dist: in std_logic_vector(12 downto 0);
-        blink_dist: in std_logic_vector(12 downto 0);
-        clears: out std_logic_vector(5 downto 0):= (others => '0')
-    );
+component distance_to_blink is
+	generic(maxfreq: natural:= 16;
+			  scale: natural:=13 --how much does distance change frequency per 0.01cm
+			 );
+	port(clk: in std_logic;
+		 reset_n: in std_logic;
+		 distance: in std_logic_vector(12 downto 0);
+		 clears: out std_logic_vector(5 downto 0)
+		);
 end component;
-
 
 begin
 
@@ -172,11 +157,10 @@ begin
    --DP_in    <= "000000"; -- position of the decimal point in the display (1=LED on,0=LED off)
    --blank    <= "110000"; -- blank the 2 MSB 7-segment displays (1=7-seg display off, 0=7-seg display on)
 
-sevseg_blink_ins: sevseg_blink
+distance_to_blink_ins: distance_to_blink
 	port map(clk => clk,
 				reset_n => reset_n,
-				dist => dist_binary,
-				blink_dist => "0011111010000",
+				distance => dist_binary,
 				clears => blink_clears
 	);
 	
