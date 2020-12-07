@@ -22,7 +22,7 @@ architecture tb of tb_distance_to_buzzer is
     signal distance : std_logic_vector (12 downto 0);
     signal buzzer   : std_logic;
 
-    constant TbPeriod : time := 20 us; -- EDIT Put right period here
+    constant TbPeriod : time := 20 ns; -- EDIT Put right period here
     signal TbClock : std_logic := '0';
     signal TbSimEnded : std_logic := '0';
 
@@ -43,7 +43,7 @@ begin
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        distance <= (7 => '1',others => '0');
+        distance <= (others => '0');
 
         -- Reset generation
         -- EDIT: Check that reset_n is really your reset signal
@@ -52,8 +52,10 @@ begin
         reset_n <= '1';
         wait for 100 ns;
         -- EDIT Add stimuli here
-        wait for 400 * TbPeriod;
-		  
+		  for i in 12 downto 11 loop
+				distance <= (i => '1',others => '0');
+				wait for 10ms;
+		  end loop;
         -- Stop the clock and hence terminate the simulation
         TbSimEnded <= '1';
         wait;

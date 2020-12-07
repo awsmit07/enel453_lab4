@@ -126,7 +126,7 @@ end component;
 
 component distance_to_buzzer is
 	generic(maxfreq: natural:=5000;
-			  scale: natural:=6
+			  scale: natural:=5
 			 );
 	port(clk: in std_logic;
 		 reset_n: in std_logic;
