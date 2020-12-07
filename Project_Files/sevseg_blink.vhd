@@ -42,7 +42,7 @@ architecture behavioral of sevseg_blink is
             clk: in std_logic;
             reset_n: in std_logic;
             enable: in std_logic;
-	    dynamic_period: in integer;
+	    dynamic_period: in natural;
             zero: out std_logic
         );
     end component;
@@ -113,7 +113,8 @@ begin
         if(enable = '1' and rising_edge(clk)) then
             -- Take the floor of the distance in CM and subtract floor
             -- of the minimum distance (3cm)
-            period_multiplier <= to_integer(unsigned(dist))/100 - 3;
+            --period_multiplier <= to_integer(unsigned(dist))/100 - 3;
+				period_multiplier <= to_integer(shift_right(unsigned(dist),7)) - 3;
         end if;
     end process;
 

@@ -18,7 +18,7 @@ architecture Behavioral of top_level is
 
 Signal Num_Hex0, Num_Hex1, Num_Hex2, Num_Hex3, Num_Hex4, Num_Hex5 : STD_LOGIC_VECTOR (3 downto 0):= (others=>'0');
 Signal DP_in:  STD_LOGIC_VECTOR (5 downto 0);
-Signal blank:  STD_LOGIC_VECTOR (5 downto 0):="110000";
+Signal blank,bcd_clears,blink_clears:  STD_LOGIC_VECTOR (5 downto 0):="110000";
 Signal binary: STD_LOGIC_VECTOR (15 downto 0);
 Signal bcd:           STD_LOGIC_VECTOR(15 DOWNTO 0);
 Signal display_binary: STD_LOGIC_VECTOR(15 downto 0);
@@ -135,6 +135,32 @@ component distance_to_buzzer is
 		);
 end component;
 
+component sevseg_blink is
+    -- Controls blinking of the seven segment display
+    --
+    -- clk: system clock
+    --
+    -- reset_n: asyncronous active low reset
+    --
+    -- dist: the 13 bit distance value measured in intervals of 0.0001m
+    --
+    -- blink_dist: the distance below which to start blinking
+    --
+    -- clears: outputs an array of either all ones or zeros. If one then
+    -- the display will be cleared. If zero then the display will be on.
+    -- clears will turn on and off to blink the LEDs.
+
+    port
+    (
+        clk: in std_logic;
+        reset_n: in std_logic:= '1';
+        dist: in std_logic_vector(12 downto 0);
+        blink_dist: in std_logic_vector(12 downto 0);
+        clears: out std_logic_vector(5 downto 0):= (others => '0')
+    );
+end component;
+
+
 begin
 
    Num_Hex0 <= display_binary(3  downto  0);
@@ -146,6 +172,14 @@ begin
    --DP_in    <= "000000"; -- position of the decimal point in the display (1=LED on,0=LED off)
    --blank    <= "110000"; -- blank the 2 MSB 7-segment displays (1=7-seg display off, 0=7-seg display on)
 
+sevseg_blink_ins: sevseg_blink
+	port map(clk => clk,
+				reset_n => reset_n,
+				dist => dist_binary,
+				blink_dist => "0011111010000",
+				clears => blink_clears
+	);
+	
 distance_to_LEDR_ins: distance_to_LEDR
 	port map(clk => clk,
 				reset_n => reset_n,
@@ -167,7 +201,7 @@ blanks_ins: bcd_clear_leading_zeros
 				mode => sync_sw(9 downto 8),
 				bcd => display_binary,
 				dp => dp_in(3 downto 0),
-				clears => blank(3 downto 0)
+				clears => bcd_clears(3 downto 0)
 	);
 
 SevenSegment_ins: SevenSegment
@@ -263,6 +297,7 @@ dist_adc: ADC_Data
 				);
 				
 binary <= "00000000" & sync_sw(7 downto 0);
+blank <= blink_clears or bcd_clears;
 
 
 end Behavioral;
