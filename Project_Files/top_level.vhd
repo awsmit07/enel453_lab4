@@ -125,8 +125,8 @@ component distance_to_LEDR is
 end component;
 
 component distance_to_buzzer is
-	generic(maxcount: natural:=200;
-			  scale: natural:=5
+	generic(maxfreq: natural:=5000;
+			  scale: natural:=6
 			 );
 	port(clk: in std_logic;
 		 reset_n: in std_logic;

@@ -43,7 +43,7 @@ begin
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        distance <= (10 => '1',others => '0');
+        distance <= (7 => '1',others => '0');
 
         -- Reset generation
         -- EDIT: Check that reset_n is really your reset signal

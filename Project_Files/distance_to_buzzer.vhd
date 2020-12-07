@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity distance_to_buzzer is
-	generic(maxcount: natural:=50;
-			  scale: natural:=7
+	generic(maxfreq: natural:= 5000;
+			  scale: natural:=6 --how much does distance change frequency per 0.01cm 50000/(2^scale)*2
 			 );
 	port(clk: in std_logic;
 		 reset_n: in std_logic;
@@ -14,12 +14,14 @@ entity distance_to_buzzer is
 end entity;
 
 architecture behavioural of distance_to_buzzer is
-
+	
+	constant mincount: natural :=50000/maxfreq/2;
+	constant countmod: natural :=499/(2**scale);
+	constant maxcount: natural :=mincount+(3560/(2**scale))-countmod;
+	
 	signal countflag: std_logic;
 	signal count_to: natural:=maxcount;
 	signal buzzerval: std_logic;
-	
-	constant countmod: natural :=499/(2**scale);
 
 	component downcounter is
 		Generic ( period  : natural := 1000); -- number to count       
@@ -51,10 +53,10 @@ architecture behavioural of distance_to_buzzer is
 			buzzerval <= '0';
 			count_to <= maxcount;
 		elsif(rising_edge(clk)) then
-			if(to_integer(unsigned(distance)) >= 20) then
+			if(to_integer(unsigned(distance)) >= 3560) then
 				count_to <= maxcount; --50000Hz/500Hz
 			else
-				count_to <= maxcount-to_integer(shift_right(unsigned(distance),scale))+15; --500Hz -3Hz/cm;
+				count_to <= mincount+to_integer(shift_right(unsigned(distance),scale))-countmod;
 			end if;
 				
 			if(countflag = '1') then
