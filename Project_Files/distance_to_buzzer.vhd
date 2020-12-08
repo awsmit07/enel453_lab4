@@ -14,12 +14,15 @@ entity distance_to_buzzer is
 end entity;
 
 architecture behavioural of distance_to_buzzer is
-	
+
 	constant mincount: natural :=50000000/maxfreq/2;
 	--constant countmod: natural :=499/(2**scale);
 	--constant maxcount: natural :=mincount+(3560/(2**scale));
+	-- For hardware:
 	constant maxcount: natural :=mincount+(3560*(2**scale));
-	
+	-- For simulations:
+	--constant maxcount: natural := mincount + (2000*(2**scale));
+
 	signal countflag: std_logic;
 	signal count_to: natural:=maxcount;
 	signal buzzerval: std_logic;
@@ -27,7 +30,7 @@ architecture behavioural of distance_to_buzzer is
 	signal count_to_buffer: natural:=count_to;
 
 	component downcounter is
-		Generic ( period  : natural := 1000); -- number to count       
+		Generic ( period  : natural := 1000); -- number to count
 		PORT    ( clk     : in  STD_LOGIC; -- clock to be divided
 				  reset_n : in  STD_LOGIC; -- active-high reset
 				  enable  : in  STD_LOGIC:='1'; -- active-high enable
@@ -39,7 +42,7 @@ architecture behavioural of distance_to_buzzer is
 	end component;
 
 	begin
-	
+
 	buzzercounter: downcounter
 		generic map(period => maxcount)
 		port map(clk => clk,
@@ -47,32 +50,35 @@ architecture behavioural of distance_to_buzzer is
 					dynamic_period => count_to,
 					zero => countflag
 		);
-	
+
 	buzzergen: process(clk,reset_n)
-	
+
 		begin
-		
+
 		if(reset_n = '0') then
 			buzzerval <= '0';
 			count_to <= maxcount;
 		elsif(rising_edge(clk)) then
+			-- Hardware Values
 			if(to_integer(unsigned(distance)) >= 3560) then
+			-- Simulation Values
+			--if(to_integer(unsigned(distance)) >= 2000) then
 				count_to_buffer <= maxcount; --50000Hz/500Hz
 			else
 				--count_to <= mincount+to_integer(shift_right(unsigned(distance),scale));
 				count_to_buffer <= mincount+to_integer(shift_left(unsigned(distance_pd),scale));
 			end if;
-				
+
 			if(countflag = '1') then
 				buzzerval <= not buzzerval;
 			end if;
-			
+
 			count_to <= count_to_buffer;
-			
+
 		end if;
-	
+
 	end process;
-	
+
 	buzzer <= buzzerval;
 	distance_pd(12 downto 0) <= distance;
 

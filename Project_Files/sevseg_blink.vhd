@@ -71,7 +71,7 @@ begin
         generic map
         (
             781250 -- hardware mode. Set clock output to 64Hz for visible output
-            -- 2500 -- Simulation Mode. Set clock to 20kHz for faster simulations
+            -- 2 -- Simulation Mode. Set clock to 25MHz for faster simulations
         )
         port map
         (

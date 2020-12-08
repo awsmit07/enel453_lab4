@@ -125,9 +125,16 @@ component distance_to_LEDR is
 end component;
 
 component distance_to_buzzer is
-	generic(maxfreq: natural:=5000;
-			  scale: natural:=5
-			 );
+	generic
+	(
+		-- Values for Hardware
+		maxfreq: natural:=5000;
+		scale: natural:=5
+
+		-- Values for Simulation
+		-- maxfreq: natural:=25000000;
+		-- scale: natural:=0
+	);
 	port(clk: in std_logic;
 		 reset_n: in std_logic;
 		 distance: in std_logic_vector(12 downto 0);
@@ -179,21 +186,21 @@ sevseg_blink_ins: sevseg_blink
 				blink_dist => "0011111010000",
 				clears => blink_clears
 	);
-	
+
 distance_to_LEDR_ins: distance_to_LEDR
 	port map(clk => clk,
 				reset_n => reset_n,
 				distance => dist_binary,
 				LEDR => LEDR
 	);
-	
+
 distance_to_buzzer_ins: distance_to_buzzer
 	port map(clk => clk,
 				reset_n => reset_n,
 				distance => dist_binary,
 				buzzer => buzzer
 	);
-	
+
 blanks_ins: bcd_clear_leading_zeros
 	generic map("0101")
 	port map(clk => clk,
@@ -280,7 +287,7 @@ synchronizer_10bit_sw: synchronizer_10bit
 
 debounce_freeze: debounce
 -- Stable time set to 0 for testbenches. Set to 30 for use on hardware
-	generic map(stable_time => 30,reset_result => 1) 
+	generic map(stable_time => 0,reset_result => 1)
 	port map(
 		clk => clk,
 		reset_n => reset_n,
@@ -295,7 +302,7 @@ dist_adc: ADC_Data
 				distance => dist_binary,
 				ADC_out => adc_binary(11 downto 0)
 				);
-				
+
 binary <= "00000000" & sync_sw(7 downto 0);
 blank <= blink_clears or bcd_clears;
 
